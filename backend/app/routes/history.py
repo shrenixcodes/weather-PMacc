@@ -72,3 +72,33 @@ def delete_history(id):
     db.session.delete(history)
     db.session.commit()
     return '', 204
+
+from flask import Response
+from app.services.export_service import export_to_csv, export_to_json, export_to_pdf
+
+@history_bp.route('/export/csv', methods=['GET'])
+def export_csv():
+    csv_data = export_to_csv()
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=weather_history.csv"}
+    )
+
+@history_bp.route('/export/json', methods=['GET'])
+def export_json():
+    json_data = export_to_json()
+    return Response(
+        json_data,
+        mimetype="application/json",
+        headers={"Content-disposition": "attachment; filename=weather_history.json"}
+    )
+
+@history_bp.route('/export/pdf', methods=['GET'])
+def export_pdf():
+    pdf_data = export_to_pdf()
+    return Response(
+        pdf_data,
+        mimetype="application/pdf",
+        headers={"Content-disposition": "attachment; filename=weather_history.pdf"}
+    )

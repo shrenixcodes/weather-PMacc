@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from app.services.weather_service import fetch_weather_data
 
 weather_bp = Blueprint('weather', __name__)
 
@@ -8,5 +9,11 @@ def get_weather():
     if not q:
         return jsonify({'error': 'Missing location query parameter "q"'}), 400
     
-    # Placeholder for actual API call logic
-    return jsonify({'message': f'Weather for {q}'})
+    try:
+        data = fetch_weather_data(q)
+        return jsonify(data)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
